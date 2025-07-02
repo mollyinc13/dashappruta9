@@ -1,0 +1,150 @@
+---
+// src/components/Navbar.astro
+import { auth } from '../lib/firebase';
+import { signOut } from 'firebase/auth';
+
+// This script will be handled client-side for user interactions
+const navBarScript = `
+    import { auth } from '/src/lib/firebase.ts'; // Client-side path
+    import { signOut } from 'firebase/auth';
+
+    const userAvatarButton = document.getElementById('user-avatar-button');
+    const userDropdown = document.getElementById('user-dropdown');
+    const logoutButton = document.getElementById('logout-button');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    // Toggle user dropdown
+    if (userAvatarButton && userDropdown) {
+        userAvatarButton.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+    }
+
+    // Toggle mobile menu
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    // Handle logout
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('User signed out');
+                // Redirect to login page, BaseLayout should also catch this
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Sign out error', error);
+            }
+        });
+    }
+
+    // Display user info (this will be enhanced by passing props or using a client-side store)
+    const userNameElement = document.getElementById('user-name');
+    const userAvatarImg = document.getElementById('user-avatar-img');
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            if (userNameElement) {
+                userNameElement.textContent = user.displayName || 'Usuario';
+            }
+            if (userAvatarImg && user.photoURL) {
+                userAvatarImg.src = user.photoURL;
+            }
+        } else {
+            // Handle cases where user is not logged in, though BaseLayout should redirect
+            if (userNameElement) {
+                userNameElement.textContent = 'Invitado';
+            }
+        }
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', function(event) {
+        if (userAvatarButton && userDropdown && !userAvatarButton.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.add('hidden');
+        }
+        if (mobileMenuButton && mobileMenu && !mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+`;
+
+// Props for user information (can be passed from BaseLayout or a higher-order component)
+export interface Props {
+    userName?: string;
+    userAvatarUrl?: string;
+}
+
+const { userName = "Usuario", userAvatarUrl = "https://via.placeholder.com/150/771796" } = Astro.props;
+---
+
+<nav class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed top-0 left-0 right-0 z-50">
+  <div class="flex flex-wrap justify-between items-center">
+    <div class="flex justify-start items-center">
+      {/* Hamburger Menu for mobile, to toggle Sidebar (functionality TBD with Sidebar) */}
+      <button
+        id="sidebar-toggle-button"
+        aria-controls="drawer-navigation"
+        class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Toggle sidebar</span>
+      </button>
+      <a href="/admin/ranking" class="flex items-center justify-between mr-4">
+        <!-- Placeholder Ruta9 Logo -->
+        <img src="/public/logo.png" class="mr-3 h-8" alt="Ruta9 Logo" /> <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Ruta9 Admin</span>
+      </a>
+    </div>
+    <div class="flex items-center lg:order-2">
+      {/* User Avatar and Dropdown */}
+      <button type="button" class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-avatar-button">
+        <span class="sr-only">Open user menu</span>
+        <img class="w-8 h-8 rounded-full" id="user-avatar-img" src={userAvatarUrl} alt="User photo" />
+      </button>
+      <!-- Dropdown menu -->
+      <div class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+        <div class="py-3 px-4">
+          <span class="block text-sm font-semibold text-gray-900 dark:text-white" id="user-name">{userName}</span>
+          {/* <span class="block text-sm text-gray-500 truncate dark:text-gray-400" id="user-email">{userEmail}</span> */}
+        </div>
+        <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+          {/*<li>
+            <a href="/settings" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Account settings</a>
+          </li>*/}
+        </ul>
+        <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+          <li>
+            <a href="#" id="logout-button" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Cerrar sesión</a>
+          </li>
+        </ul>
+      </div>
+      {/* Mobile Menu Button (for navbar items if any, not sidebar) */}
+      <button id="mobile-menu-button" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+      </button>
+    </div>
+    {/* Mobile menu items (if any beyond user stuff) - hidden by default */}
+    <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu">
+      <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+        {/* Links can go here if needed */}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script define:vars={{}} is:inline>
+  ${navBarScript}
+</script>
+
+<style>
+  /* Ensure navbar doesn't overlap content when fixed */
+  /* body { padding-top: 64px; } /* Adjust based on actual navbar height */
+  /* This padding should ideally be on the main content container within BaseLayout */
+</style>

@@ -1,0 +1,82 @@
+---
+// src/components/RankingTable.astro
+// Props will include ranking data
+export interface Player {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  puntaje: number;
+  ruteroNivel: 'Oro9' | 'Plata Rutero' | 'Bronce Rutero' | string; // Allow string for flexibility
+}
+
+export interface Props {
+  players: Player[];
+}
+
+const { players = [] } = Astro.props; // Default to empty array
+
+const levelBadges = {
+  Oro9: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  "Plata Rutero": "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+  "Bronce Rutero": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+};
+
+// Client-side script if any dynamic interaction is needed later
+const tableScript = `
+    console.log("RankingTable script loaded");
+    // Potential future interactions: sorting, filtering (if table grows)
+`;
+---
+
+<div class="bg-white dark:bg-gray-800 p-4 shadow-md rounded-lg">
+  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Top Jugadores</h3>
+  {players.length === 0 ? (
+    <p class="text-gray-500 dark:text-gray-400">No hay datos de ranking disponibles en este momento.</p>
+  ) : (
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">#</th>
+            <th scope="col" class="px-6 py-3">Jugador</th>
+            <th scope="col" class="px-6 py-3">Puntaje</th>
+            <th scope="col" class="px-6 py-3">Nivel Rutero</th>
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((player, index) => (
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {index + 1}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <img class="w-10 h-10 rounded-full mr-3 object-cover" src={player.photoURL || 'https://via.placeholder.com/40'} alt={player.displayName} />
+                  <div>
+                    <div class="font-semibold text-gray-900 dark:text-white">{player.displayName}</div>
+                    {/* <div class="text-xs text-gray-500 dark:text-gray-400">UID: {player.uid}</div> */}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                {player.puntaje}
+              </td>
+              <td class="px-6 py-4">
+                <span class:list={[
+                  "text-xs font-medium me-2 px-2.5 py-0.5 rounded",
+                  levelBadges[player.ruteroNivel] || 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' // Default badge
+                ]}>
+                  {player.ruteroNivel}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
+<script define:vars={{}} is:inline>
+    ${tableScript}
+</script>

@@ -1,8 +1,58 @@
 ---
-import LayoutSidebar from '../app/LayoutSidebar.astro';
-import LandingReadme from '../modules/LandingReadme.astro';
+// src/pages/index.astro
+// This page will redirect to the admin ranking page or login page
+// For now, it directly redirects to the ranking page.
+// Authentication logic will be added later.
+import { auth } from '../lib/firebase'; // Assuming auth is set up
+import { onAuthStateChanged } from 'firebase/auth';
+
+// Check user's auth state (client-side)
+if (typeof window !== 'undefined') {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, redirect to admin dashboard (e.g., ranking)
+      window.location.href = '/admin/ranking';
+    } else {
+      // User is signed out, redirect to a login page (to be created)
+      // For now, let's assume a login page at /login
+      // If it doesn't exist, Astro will show a 404, which is acceptable for now.
+      // Or, we can redirect to ranking and let BaseLayout handle it.
+      // For simplicity during initial setup, redirecting to ranking.
+      // BaseLayout will eventually handle the redirection to a proper login page.
+      window.location.href = '/admin/ranking'; // Or a dedicated login page later: '/login';
+    }
+  });
+}
 ---
 
-<LayoutSidebar>
-	<LandingReadme />
-</LayoutSidebar>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirigiendo...</title>
+  <meta http-equiv="refresh" content="0;url=/admin/ranking">
+  <script>
+    // Fallback for meta refresh or if scripts are processed before redirect
+    // The onAuthStateChanged logic above is preferred for client-side checks.
+    // This script block offers a more immediate redirect attempt if needed.
+    // However, true auth handling will be in BaseLayout or middleware.
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+      // window.location.href = '/admin/ranking'; // Or /login based on auth state
+    }
+  </script>
+</head>
+<body>
+  <p>Si no eres redirigido automáticamente, <a href="/admin/ranking">haz clic aquí</a>.</p>
+</body>
+</html>
+
+<style>
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+</style>

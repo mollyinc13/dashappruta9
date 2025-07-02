@@ -1,0 +1,116 @@
+---
+// src/layouts/BaseLayout.astro
+import Navbar from '../components/Navbar.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { auth } from '../lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
+const { title = 'Ruta9 Admin Dashboard' } = Astro.props;
+
+// Determine the current path
+const currentPath = Astro.url.pathname;
+const isLoginPage = currentPath === '/login' || currentPath === '/login/';
+const isAdminPage = currentPath.startsWith('/admin');
+
+// Client-side script for auth redirection
+const authScript = `
+  import { auth } from '/src/lib/firebase.ts'; // Adjusted path for client-side import
+  import { onAuthStateChanged } from 'firebase/auth';
+
+  const currentPath = window.location.pathname;
+  const isLoginPage = currentPath === '/login' || currentPath === '/login/';
+  const isAdminPage = currentPath.startsWith('/admin');
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user && isAdminPage && !isLoginPage) {
+      // If not logged in, trying to access an admin page (that isn't login), redirect to /login
+      console.log('User not authenticated, redirecting to login from BaseLayout.');
+      window.location.href = '/login';
+    } else if (user && isLoginPage) {
+      // If logged in and on the login page, redirect to admin dashboard (e.g., ranking)
+      console.log('User authenticated and on login page, redirecting to admin/ranking.');
+      window.location.href = '/admin/ranking';
+    }
+  });
+`;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <!-- TailwindCSS is typically included via Astro integration, ensure astro.config.mjs is set up -->
+    <!-- If you have a global CSS file, link it here -->
+    <!-- <link rel="stylesheet" href="/styles/global.css"> -->
+    <script type="module" is:inline>
+      // Inline the auth script to run it as soon as possible
+      ${authScript}
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    {/* Conditionally render Navbar and Sidebar if not on the login page */}
+    {!isLoginPage && (
+        <>
+            <Navbar userName="Usuario" userAvatarUrl="" />
+            <Sidebar currentPage={currentPath} />
+        </>
+    )}
+
+    <div class:list={[
+        "flex h-screen overflow-hidden",
+        { "pt-16": !isLoginPage } // Add padding top for fixed navbar if not login page
+    ]}>
+        {/* Main content area */}
+        {/* Adjust padding left if sidebar is present and not on login page */}
+        <div class:list={[
+            "flex-1 flex flex-col overflow-y-auto",
+            { "md:ml-64": !isLoginPage } // Add margin for sidebar on medium screens and up if not login page
+        ]}>
+            <main class="flex-1 p-4"> {/* Added padding to main */}
+                <slot /> {/* Page content will be injected here */}
+            </main>
+
+            {/* Footer could go here if needed, ensure it's within the scrollable area */}
+            {/*
+            <footer class="p-4 bg-white dark:bg-gray-800 shadow md:flex md:items-center md:justify-between md:p-6 xl:p-8 dark:border-gray-600">
+                <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                    © {new Date().getFullYear()} <a href="#" class="hover:underline">Ruta9</a>. All rights reserved.
+                </p>
+            </footer>
+            */}
+        </div>
+    </div>
+
+    {/*
+      Flowbite and other JS interactivity scripts might be needed.
+      The original template likely included these.
+      For now, focusing on auth and basic structure.
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    -->
+</body>
+</html>
+
+<style is:global>
+  /* Basic global styles can go here if not using a separate CSS file */
+  /* Ensure Tailwind base, components, utilities are imported, usually in a global.css or via astro.config */
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  /* Example of basic scrollbar styling (optional) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* gray-600 */
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #374151; /* gray-700 */
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #1f2937; /* gray-800 */
+  }
+</style>

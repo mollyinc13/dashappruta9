@@ -1,0 +1,17 @@
+---
+// src/pages/admin/ranking.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+// TODO: Import RankingTable component
+// TODO: Fetch ranking data from Firebase
+---
+<BaseLayout title="Ranking de Jugadores - Ruta9 Admin">
+  <div class="px-4 pt-6">
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Ranking de Jugadores</h1>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Top 3 jugadores con mayor puntaje en Rutero Run.</p>
+    {/* TODO: Add RankingTable component here and pass data */}
+    <div class="mt-4 p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+      <p class="text-gray-700 dark:text-gray-300">Contenido del ranking de jugadores irá aquí.</p>
+      {/* Example: <RankingTable data={rankingData} /> */}
+    </div>
+  </div>
+</BaseLayout>
