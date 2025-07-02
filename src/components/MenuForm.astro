@@ -1,0 +1,93 @@
+---
+// src/components/MenuForm.astro
+// Props will include: product data (for editing), onSave callback, onCancel callback
+export interface Props {
+    // Define props for product data, localId, etc.
+    // Example:
+    // product?: { id?: string; nombre: string; descripcion: string; precio: number; disponible: boolean; imagenURL?: string };
+    // localId: string;
+    // isEditing: boolean;
+}
+
+// const { product, localId, isEditing } = Astro.props;
+
+// Client-side script for form handling, image upload, etc.
+const formScript = `
+    // Logic for form submission to Firebase
+    // Logic for image upload to Firebase Storage
+    // Logic for form validation
+    console.log("MenuForm script loaded");
+
+    // Example: Handle image preview
+    const imageInput = document.getElementById('productImage');
+    const imagePreview = document.getElementById('imagePreview');
+    if (imageInput && imagePreview) {
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+`;
+---
+
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        {/* {isEditing ? 'Editar Producto' : 'Crear Nuevo Producto'} */}
+        Placeholder: Crear/Editar Producto
+    </h3>
+    <form id="menuItemForm">
+        {/* Hidden input for product ID if editing */}
+        {/* <input type="hidden" id="productId" name="productId" value={product?.id || ''}> */}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="productName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del Producto</label>
+                <input type="text" id="productName" name="productName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Burger Clásica" required />
+            </div>
+            <div>
+                <label for="productPrice" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Precio</label>
+                <input type="number" id="productPrice" name="productPrice" step="0.01" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="6500" required />
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <label for="productDescription" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripción</label>
+            <textarea id="productDescription" name="productDescription" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Doble carne, queso cheddar, tocino..."></textarea>
+        </div>
+
+        <div class="mt-6">
+            <label for="productImage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Imagen del Producto</label>
+            <input type="file" id="productImage" name="productImage" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+            <img id="imagePreview" src="#" alt="Previsualización" class="mt-2 w-32 h-32 object-cover rounded-lg hidden border dark:border-gray-600" />
+        </div>
+
+        <div class="mt-6">
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="productAvailable" name="productAvailable" class="sr-only peer" checked />
+                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Disponible</span>
+            </label>
+        </div>
+
+        <div class="mt-8 flex justify-end space-x-3">
+            <button type="button" id="cancelButton" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                Cancelar
+            </button>
+            <button type="submit" id="saveButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                {/* {isEditing ? 'Guardar Cambios' : 'Crear Producto'} */}
+                Guardar Producto
+            </button>
+        </div>
+    </form>
+</div>
+
+<script define:vars={{}} is:inline>
+    ${formScript}
+</script>

@@ -1,0 +1,121 @@
+---
+// src/components/RewardsEditor.astro
+// Props will include rewards data, onSave callback
+
+export interface RewardLevel {
+  dcto: number;
+  regalo?: string;
+}
+
+export interface RewardsData {
+  Oro9: RewardLevel;
+  'Plata Rutero': RewardLevel;
+  'Bronce Rutero': RewardLevel;
+}
+
+export interface Props {
+  rewards?: RewardsData;
+}
+
+const { rewards = { // Default structure
+    Oro9: { dcto: 0, regalo: '' },
+    'Plata Rutero': { dcto: 0, regalo: '' },
+    'Bronce Rutero': { dcto: 0, regalo: '' }
+}} = Astro.props;
+
+const levels: Array<{ key: keyof RewardsData, name: string }> = [
+    { key: 'Oro9', name: 'Oro9' },
+    { key: 'Plata Rutero', name: 'Plata Rutero' },
+    { key: 'Bronce Rutero', name: 'Bronce Rutero' },
+];
+
+// Client-side script for form handling, validation, saving to Firebase
+const editorScript = `
+    console.log("RewardsEditor script loaded");
+
+    const form = document.getElementById('rewardsForm');
+    if (form) {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const updatedRewards = {
+                Oro9: {
+                    dcto: parseInt(formData.get('dcto_Oro9')) || 0,
+                    regalo: formData.get('regalo_Oro9') || '',
+                },
+                'Plata Rutero': {
+                    dcto: parseInt(formData.get('dcto_Plata Rutero')) || 0,
+                    regalo: formData.get('regalo_Plata Rutero') || '',
+                },
+                'Bronce Rutero': {
+                    dcto: parseInt(formData.get('dcto_Bronce Rutero')) || 0,
+                    regalo: formData.get('regalo_Bronce Rutero') || '',
+                }
+            };
+            console.log('Saving rewards:', updatedRewards);
+            // TODO: Implement Firebase save logic here
+            // Example: await saveRewardsToFirebase(updatedRewards);
+            alert('Cambios guardados (simulación). Conectar a Firebase.');
+        });
+    }
+
+    // Validation (onBlur, onChange) - Example for one input
+    const inputs = form.querySelectorAll('input[type="number"], input[type="text"]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', (event) => {
+            // Add validation logic, e.g., check if number is within range
+            console.log(\`Blurred: \${event.target.name}, Value: \${event.target.value}\`);
+        });
+        input.addEventListener('input', (event) => {
+             // Add live validation logic if needed
+            console.log(\`Input: \${event.target.name}, Value: \${event.target.value}\`);
+        });
+    });
+`;
+---
+
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Editor de Recompensas Rutero</h3>
+    <form id="rewardsForm">
+        {levels.map(level => (
+            <div class="mb-8 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-3">{level.name}</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for={`dcto_${level.key}`} class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descuento (%)</label>
+                        <input
+                            type="number"
+                            id={`dcto_${level.key}`}
+                            name={`dcto_${level.key}`}
+                            value={rewards[level.key]?.dcto || 0}
+                            min="0"
+                            max="100"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for={`regalo_${level.key}`} class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Regalo (Opcional)</label>
+                        <input
+                            type="text"
+                            id={`regalo_${level.key}`}
+                            name={`regalo_${level.key}`}
+                            value={rewards[level.key]?.regalo || ''}
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder={level.key === 'Bronce Rutero' ? 'N/A (Bronce no suele tener regalo)' : 'Ej: Bebida gratis'}
+                        />
+                    </div>
+                </div>
+            </div>
+        ))}
+        <div class="mt-8 flex justify-end">
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<script define:vars={{}} is:inline>
+    ${editorScript}
+</script>

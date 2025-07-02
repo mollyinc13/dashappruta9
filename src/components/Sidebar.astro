@@ -1,0 +1,88 @@
+---
+// src/components/Sidebar.astro
+export interface Props {
+    currentPage?: string; // To highlight the active link, e.g., Astro.url.pathname
+}
+
+const { currentPage = '' } = Astro.props;
+
+const menuItems = [
+    // { href: "/admin/dashboard", label: "Panel", icon: "home" }, // Optional Panel
+    { href: "/admin/ranking", label: "Ranking", icon: "trophy" },
+    { href: "/admin/menus", label: "Menús", icon: "bars" }, // Using 'bars' for menu/list like icon
+    { href: "/admin/descuentos", label: "Descuentos", icon: "tag" }
+];
+
+// Heroicons (example, replace with actual SVG paths or a library)
+const icons = {
+home: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>`,
+trophy: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M15.316 3.016A8.001 8.001 0 0010 2a8 8 0 00-5.316 1.016l-.002.002A5.968 5.968 0 002 8.5V14.5a1.5 1.5 0 001.5 1.5h13A1.5 1.5 0 0018 14.5V8.5a5.968 5.968 0 00-2.684-5.482l-.002-.002zM10 4a6 6 0 100 12 6 6 0 000-12zm0 10a4 4 0 110-8 4 4 0 010 8zm0-2a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /><path d="M3.172 4.172a4.002 4.002 0 015.656 0L10 5.343l1.172-1.171a4.002 4.002 0 015.656 5.656L10 12.657l-6.828-6.829a4.002 4.002 0 010-5.656z" /></svg>`, // Simplified trophy icon
+bars: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>`,
+tag: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7A1 1 0 0110 18H4a1 1 0 01-1-1V6a1 1 0 01.293-.707l7-7A1 1 0 0111 0h3.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V9.293zm-1.414-1.414L15.586 7H12V3.414L16.293 7.707zM6 12a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"></path></svg>`,
+};
+
+const sidebarScript = `
+  const sidebarToggleButton = document.getElementById('sidebar-toggle-button'); // From Navbar
+  const drawerNavigation = document.getElementById('drawer-navigation');
+  const mainContentForOverlay = document.querySelector('main'); // A bit generic, might need a specific ID on main content area
+
+  if (sidebarToggleButton && drawerNavigation) {
+    sidebarToggleButton.addEventListener('click', () => {
+      drawerNavigation.classList.toggle('-translate-x-full');
+      // Optional: Add overlay to content area or disable body scroll
+      // This requires more careful state management
+      if (!drawerNavigation.classList.contains('-translate-x-full')) {
+        // Show overlay or dim background
+      } else {
+        // Hide overlay
+      }
+    });
+  }
+
+  // Close sidebar when clicking outside on mobile (if an overlay is implemented)
+  // document.addEventListener('click', (event) => {
+  //   if (drawerNavigation && !drawerNavigation.classList.contains('-translate-x-full') && !drawerNavigation.contains(event.target) && !sidebarToggleButton.contains(event.target)) {
+  //     drawerNavigation.classList.add('-translate-x-full');
+  //   }
+  // });
+`;
+---
+
+<aside
+  id="drawer-navigation"
+  class="fixed top-0 left-0 z-40 h-screen pt-16 overflow-y-auto bg-white w-64 dark:bg-gray-800 transition-transform -translate-x-full md:translate-x-0"
+  aria-labelledby="drawer-navigation-label"
+>
+  <div class="py-2 px-3 h-full overflow-y-auto bg-white dark:bg-gray-800">
+    <ul class="space-y-2">
+      {menuItems.map(item => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              "flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group",
+              { "bg-gray-100 dark:bg-gray-700": currentPage.startsWith(item.href) }
+            ]}
+          >
+            <Fragment set:html={icons[item.icon]} />
+            <span class="ml-3">{item.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</aside>
+
+<script define:vars={{}} is:inline>
+    ${sidebarScript}
+</script>
+
+<style>
+  /* Ensure main content is not overlapped by fixed sidebar on md+ screens */
+  /* This should be handled in BaseLayout by adding padding-left to the main content wrapper */
+  /* @media (min-width: 768px) {
+    body main section that is sibling to aside {
+      padding-left: 16rem; // w-64
+    }
+  } */
+</style>
