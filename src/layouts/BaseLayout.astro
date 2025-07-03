@@ -11,28 +11,6 @@ const { title = 'Ruta9 Admin Dashboard' } = Astro.props;
 const currentPath = Astro.url.pathname;
 const isLoginPage = currentPath === '/login' || currentPath === '/login/';
 const isAdminPage = currentPath.startsWith('/admin');
-
-// Client-side script for auth redirection
-const authScript = `
-  import { auth } from '/src/lib/firebase.ts'; // Adjusted path for client-side import
-  import { onAuthStateChanged } from 'firebase/auth';
-
-  const currentPath = window.location.pathname;
-  const isLoginPage = currentPath === '/login' || currentPath === '/login/';
-  const isAdminPage = currentPath.startsWith('/admin');
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user && isAdminPage && !isLoginPage) {
-      // If not logged in, trying to access an admin page (that isn't login), redirect to /login
-      console.log('User not authenticated, redirecting to login from BaseLayout.');
-      window.location.href = '/login';
-    } else if (user && isLoginPage) {
-      // If logged in and on the login page, redirect to admin dashboard (e.g., ranking)
-      console.log('User authenticated and on login page, redirecting to admin/ranking.');
-      window.location.href = '/admin/ranking';
-    }
-  });
-`;
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -45,7 +23,24 @@ const authScript = `
     <!-- <link rel="stylesheet" href="/styles/global.css"> -->
     <script type="module" is:inline>
       // Inline the auth script to run it as soon as possible
-      ${authScript}
+      import { auth } from '/src/lib/firebase.ts'; // Adjusted path for client-side import
+      import { onAuthStateChanged } from 'firebase/auth';
+
+      const currentPath = window.location.pathname;
+      const isLoginPage = currentPath === '/login' || currentPath === '/login/';
+      const isAdminPage = currentPath.startsWith('/admin');
+
+      onAuthStateChanged(auth, (user) => {
+        if (!user && isAdminPage && !isLoginPage) {
+          // If not logged in, trying to access an admin page (that isn't login), redirect to /login
+          console.log('User not authenticated, redirecting to login from BaseLayout.');
+          window.location.href = '/login';
+        } else if (user && isLoginPage) {
+          // If logged in and on the login page, redirect to admin dashboard (e.g., ranking)
+          console.log('User authenticated and on login page, redirecting to admin/ranking.');
+          window.location.href = '/admin/ranking';
+        }
+      });
     </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">

@@ -20,32 +20,6 @@ trophy: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-g
 bars: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>`,
 tag: `<svg class="w-6 h-6 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7A1 1 0 0110 18H4a1 1 0 01-1-1V6a1 1 0 01.293-.707l7-7A1 1 0 0111 0h3.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V9.293zm-1.414-1.414L15.586 7H12V3.414L16.293 7.707zM6 12a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"></path></svg>`,
 };
-
-const sidebarScript = `
-  const sidebarToggleButton = document.getElementById('sidebar-toggle-button'); // From Navbar
-  const drawerNavigation = document.getElementById('drawer-navigation');
-  const mainContentForOverlay = document.querySelector('main'); // A bit generic, might need a specific ID on main content area
-
-  if (sidebarToggleButton && drawerNavigation) {
-    sidebarToggleButton.addEventListener('click', () => {
-      drawerNavigation.classList.toggle('-translate-x-full');
-      // Optional: Add overlay to content area or disable body scroll
-      // This requires more careful state management
-      if (!drawerNavigation.classList.contains('-translate-x-full')) {
-        // Show overlay or dim background
-      } else {
-        // Hide overlay
-      }
-    });
-  }
-
-  // Close sidebar when clicking outside on mobile (if an overlay is implemented)
-  // document.addEventListener('click', (event) => {
-  //   if (drawerNavigation && !drawerNavigation.classList.contains('-translate-x-full') && !drawerNavigation.contains(event.target) && !sidebarToggleButton.contains(event.target)) {
-  //     drawerNavigation.classList.add('-translate-x-full');
-  //   }
-  // });
-`;
 ---
 
 <aside
@@ -74,7 +48,29 @@ const sidebarScript = `
 </aside>
 
 <script define:vars={{}} is:inline>
-    ${sidebarScript}
+  const sidebarToggleButton = document.getElementById('sidebar-toggle-button'); // From Navbar
+  const drawerNavigation = document.getElementById('drawer-navigation');
+  const mainContentForOverlay = document.querySelector('main'); // A bit generic, might need a specific ID on main content area
+
+  if (sidebarToggleButton && drawerNavigation) {
+    sidebarToggleButton.addEventListener('click', () => {
+      drawerNavigation.classList.toggle('-translate-x-full');
+      // Optional: Add overlay to content area or disable body scroll
+      // This requires more careful state management
+      if (!drawerNavigation.classList.contains('-translate-x-full')) {
+        // Show overlay or dim background
+      } else {
+        // Hide overlay
+      }
+    });
+  }
+
+  // Close sidebar when clicking outside on mobile (if an overlay is implemented)
+  // document.addEventListener('click', (event) => {
+  //   if (drawerNavigation && !drawerNavigation.classList.contains('-translate-x-full') && !drawerNavigation.contains(event.target) && !sidebarToggleButton.contains(event.target)) {
+  //     drawerNavigation.classList.add('-translate-x-full');
+  //   }
+  // });
 </script>
 
 <style>

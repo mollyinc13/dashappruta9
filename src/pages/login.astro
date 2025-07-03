@@ -3,9 +3,27 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { auth, provider } from '../lib/firebase';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+---
+<BaseLayout title="Iniciar Sesión - Ruta9 Admin">
+  <div class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="px-8 py-6 mt-4 text-left bg-white dark:bg-gray-800 shadow-lg rounded-lg w-full max-w-md">
+      <div class="flex justify-center">
+        {/* Placeholder for Ruta9 Logo */}
+        <svg class="w-20 h-20 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 16v-2m8-6h2M4 12H2m15.364 6.364l-.707-.707M6.343 17.657l-.707.707m12.728-12.728l-.707.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+      </div>
+      <h3 class="text-2xl font-bold text-center text-gray-900 dark:text-white mt-4">Iniciar Sesión</h3>
+      <h4 class="text-md font-medium text-center text-gray-700 dark:text-gray-300 mb-6">Panel de Administración Ruta9</h4>
 
-// This script will be executed on the client
-const handleLoginScript = `
+      <button id="googleLoginBtn" type="button" class="w-full text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2">
+        <svg class="w-4 h-4 mr-2 -ml-1" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 118.3 512 0 398.5 0 256S118.3 0 244 0c61.8 0 119.6 25.2 160.3 66.2l-66.6 65.6C314.6 102.7 282.7 80 244 80c-66.6 0-120.5 54.2-120.5 121.2s53.9 121.2 120.5 121.2c50.4 0 89.8-20.8 113.5-44.7l66.6 65.6c-41.1 38.1-95.2 62.7-159.9 62.7z"></path></svg>
+        Iniciar sesión con Google
+      </button>
+      <div id="errorMessage" class="mt-4 text-sm text-red-600 dark:text-red-400 text-center"></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script type_is_client_only="true" define:vars={{}} is:inline>
   import { auth, provider } from '/src/lib/firebase.ts'; // Path for client-side import
   import { signInWithPopup } from 'firebase/auth';
 
@@ -41,29 +59,6 @@ const handleLoginScript = `
       }
     });
   }
-`;
----
-<BaseLayout title="Iniciar Sesión - Ruta9 Admin">
-  <div class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-    <div class="px-8 py-6 mt-4 text-left bg-white dark:bg-gray-800 shadow-lg rounded-lg w-full max-w-md">
-      <div class="flex justify-center">
-        {/* Placeholder for Ruta9 Logo */}
-        <svg class="w-20 h-20 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 16v-2m8-6h2M4 12H2m15.364 6.364l-.707-.707M6.343 17.657l-.707.707m12.728-12.728l-.707.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-      </div>
-      <h3 class="text-2xl font-bold text-center text-gray-900 dark:text-white mt-4">Iniciar Sesión</h3>
-      <h4 class="text-md font-medium text-center text-gray-700 dark:text-gray-300 mb-6">Panel de Administración Ruta9</h4>
-
-      <button id="googleLoginBtn" type="button" class="w-full text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2">
-        <svg class="w-4 h-4 mr-2 -ml-1" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 118.3 512 0 398.5 0 256S118.3 0 244 0c61.8 0 119.6 25.2 160.3 66.2l-66.6 65.6C314.6 102.7 282.7 80 244 80c-66.6 0-120.5 54.2-120.5 121.2s53.9 121.2 120.5 121.2c50.4 0 89.8-20.8 113.5-44.7l66.6 65.6c-41.1 38.1-95.2 62.7-159.9 62.7z"></path></svg>
-        Iniciar sesión con Google
-      </button>
-      <div id="errorMessage" class="mt-4 text-sm text-red-600 dark:text-red-400 text-center"></div>
-    </div>
-  </div>
-</BaseLayout>
-
-<script type_is_client_only="true" define:vars={{}} is:inline>
-  ${handleLoginScript}
 </script>
 
 <style>
