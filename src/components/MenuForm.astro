@@ -10,31 +10,6 @@ export interface Props {
 }
 
 // const { product, localId, isEditing } = Astro.props;
-
-// Client-side script for form handling, image upload, etc.
-const formScript = `
-    // Logic for form submission to Firebase
-    // Logic for image upload to Firebase Storage
-    // Logic for form validation
-    console.log("MenuForm script loaded");
-
-    // Example: Handle image preview
-    const imageInput = document.getElementById('productImage');
-    const imagePreview = document.getElementById('imagePreview');
-    if (imageInput && imagePreview) {
-        imageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.classList.remove('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-`;
 ---
 
 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -89,5 +64,25 @@ const formScript = `
 </div>
 
 <script define:vars={{}} is:inline>
-    ${formScript}
+    // Logic for form submission to Firebase
+    // Logic for image upload to Firebase Storage
+    // Logic for form validation
+    console.log("MenuForm script loaded");
+
+    // Example: Handle image preview
+    const imageInput = document.getElementById('productImage');
+    const imagePreview = document.getElementById('imagePreview');
+    if (imageInput && imagePreview) {
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 </script>

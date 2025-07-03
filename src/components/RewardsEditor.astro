@@ -28,50 +28,6 @@ const levels: Array<{ key: keyof RewardsData, name: string }> = [
     { key: 'Plata Rutero', name: 'Plata Rutero' },
     { key: 'Bronce Rutero', name: 'Bronce Rutero' },
 ];
-
-// Client-side script for form handling, validation, saving to Firebase
-const editorScript = `
-    console.log("RewardsEditor script loaded");
-
-    const form = document.getElementById('rewardsForm');
-    if (form) {
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const formData = new FormData(form);
-            const updatedRewards = {
-                Oro9: {
-                    dcto: parseInt(formData.get('dcto_Oro9')) || 0,
-                    regalo: formData.get('regalo_Oro9') || '',
-                },
-                'Plata Rutero': {
-                    dcto: parseInt(formData.get('dcto_Plata Rutero')) || 0,
-                    regalo: formData.get('regalo_Plata Rutero') || '',
-                },
-                'Bronce Rutero': {
-                    dcto: parseInt(formData.get('dcto_Bronce Rutero')) || 0,
-                    regalo: formData.get('regalo_Bronce Rutero') || '',
-                }
-            };
-            console.log('Saving rewards:', updatedRewards);
-            // TODO: Implement Firebase save logic here
-            // Example: await saveRewardsToFirebase(updatedRewards);
-            alert('Cambios guardados (simulación). Conectar a Firebase.');
-        });
-    }
-
-    // Validation (onBlur, onChange) - Example for one input
-    const inputs = form.querySelectorAll('input[type="number"], input[type="text"]');
-    inputs.forEach(input => {
-        input.addEventListener('blur', (event) => {
-            // Add validation logic, e.g., check if number is within range
-            console.log(\`Blurred: \${event.target.name}, Value: \${event.target.value}\`);
-        });
-        input.addEventListener('input', (event) => {
-             // Add live validation logic if needed
-            console.log(\`Input: \${event.target.name}, Value: \${event.target.value}\`);
-        });
-    });
-`;
 ---
 
 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -117,5 +73,50 @@ const editorScript = `
 </div>
 
 <script define:vars={{}} is:inline>
-    ${editorScript}
+    console.log("RewardsEditor script loaded");
+
+    const form = document.getElementById('rewardsForm');
+    if (form) {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const updatedRewards = {
+                Oro9: {
+                    dcto: parseInt(formData.get('dcto_Oro9')) || 0,
+                    regalo: formData.get('regalo_Oro9') || '',
+                },
+                'Plata Rutero': {
+                    dcto: parseInt(formData.get('dcto_Plata Rutero')) || 0,
+                    regalo: formData.get('regalo_Plata Rutero') || '',
+                },
+                'Bronce Rutero': {
+                    dcto: parseInt(formData.get('dcto_Bronce Rutero')) || 0,
+                    regalo: formData.get('regalo_Bronce Rutero') || '',
+                }
+            };
+            console.log('Saving rewards:', updatedRewards);
+            // TODO: Implement Firebase save logic here
+            // Example: await saveRewardsToFirebase(updatedRewards);
+            alert('Cambios guardados (simulación). Conectar a Firebase.');
+        });
+    }
+
+    // Validation (onBlur, onChange) - Example for one input
+    // Ensure 'form' is defined if this script runs before the form element is in the DOM
+    // or if the form is not found. Consider moving this inside the 'if (form)' block or ensuring
+    // this script executes after DOM content is loaded.
+    const formElementForValidation = document.getElementById('rewardsForm');
+    if (formElementForValidation) {
+        const inputs = formElementForValidation.querySelectorAll('input[type="number"], input[type="text"]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', (event) => {
+                // Add validation logic, e.g., check if number is within range
+                console.log(`Blurred: ${event.target.name}, Value: ${event.target.value}`);
+            });
+            input.addEventListener('input', (event) => {
+                 // Add live validation logic if needed
+                console.log(`Input: ${event.target.name}, Value: ${event.target.value}`);
+            });
+        });
+    }
 </script>

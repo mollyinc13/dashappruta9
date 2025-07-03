@@ -20,12 +20,6 @@ const levelBadges = {
   "Plata Rutero": "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
   "Bronce Rutero": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
 };
-
-// Client-side script if any dynamic interaction is needed later
-const tableScript = `
-    console.log("RankingTable script loaded");
-    // Potential future interactions: sorting, filtering (if table grows)
-`;
 ---
 
 <div class="bg-white dark:bg-gray-800 p-4 shadow-md rounded-lg">
@@ -78,5 +72,6 @@ const tableScript = `
 </div>
 
 <script define:vars={{}} is:inline>
-    ${tableScript}
+    console.log("RankingTable script loaded");
+    // Potential future interactions: sorting, filtering (if table grows)
 </script>

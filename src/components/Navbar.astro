@@ -3,76 +3,6 @@
 import { auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 
-// This script will be handled client-side for user interactions
-const navBarScript = `
-    import { auth } from '/src/lib/firebase.ts'; // Client-side path
-    import { signOut } from 'firebase/auth';
-
-    const userAvatarButton = document.getElementById('user-avatar-button');
-    const userDropdown = document.getElementById('user-dropdown');
-    const logoutButton = document.getElementById('logout-button');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    // Toggle user dropdown
-    if (userAvatarButton && userDropdown) {
-        userAvatarButton.addEventListener('click', () => {
-            userDropdown.classList.toggle('hidden');
-        });
-    }
-
-    // Toggle mobile menu
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-
-    // Handle logout
-    if (logoutButton) {
-        logoutButton.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                console.log('User signed out');
-                // Redirect to login page, BaseLayout should also catch this
-                window.location.href = '/login';
-            } catch (error) {
-                console.error('Sign out error', error);
-            }
-        });
-    }
-
-    // Display user info (this will be enhanced by passing props or using a client-side store)
-    const userNameElement = document.getElementById('user-name');
-    const userAvatarImg = document.getElementById('user-avatar-img');
-
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            if (userNameElement) {
-                userNameElement.textContent = user.displayName || 'Usuario';
-            }
-            if (userAvatarImg && user.photoURL) {
-                userAvatarImg.src = user.photoURL;
-            }
-        } else {
-            // Handle cases where user is not logged in, though BaseLayout should redirect
-            if (userNameElement) {
-                userNameElement.textContent = 'Invitado';
-            }
-        }
-    });
-
-    // Close dropdown if clicked outside
-    document.addEventListener('click', function(event) {
-        if (userAvatarButton && userDropdown && !userAvatarButton.contains(event.target) && !userDropdown.contains(event.target)) {
-            userDropdown.classList.add('hidden');
-        }
-        if (mobileMenuButton && mobileMenu && !mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
-            mobileMenu.classList.add('hidden');
-        }
-    });
-`;
-
 // Props for user information (can be passed from BaseLayout or a higher-order component)
 export interface Props {
     userName?: string;
@@ -140,7 +70,72 @@ const { userName = "Usuario", userAvatarUrl = "https://via.placeholder.com/150/7
 </nav>
 
 <script define:vars={{}} is:inline>
-  ${navBarScript}
+    import { auth } from '/src/lib/firebase.ts'; // Client-side path
+    import { signOut } from 'firebase/auth';
+
+    const userAvatarButton = document.getElementById('user-avatar-button');
+    const userDropdown = document.getElementById('user-dropdown');
+    const logoutButton = document.getElementById('logout-button');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    // Toggle user dropdown
+    if (userAvatarButton && userDropdown) {
+        userAvatarButton.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+    }
+
+    // Toggle mobile menu
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    // Handle logout
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('User signed out');
+                // Redirect to login page, BaseLayout should also catch this
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Sign out error', error);
+            }
+        });
+    }
+
+    // Display user info (this will be enhanced by passing props or using a client-side store)
+    const userNameElement = document.getElementById('user-name');
+    const userAvatarImg = document.getElementById('user-avatar-img');
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            if (userNameElement) {
+                userNameElement.textContent = user.displayName || 'Usuario';
+            }
+            if (userAvatarImg && user.photoURL) {
+                userAvatarImg.src = user.photoURL;
+            }
+        } else {
+            // Handle cases where user is not logged in, though BaseLayout should redirect
+            if (userNameElement) {
+                userNameElement.textContent = 'Invitado';
+            }
+        }
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', function(event) {
+        if (userAvatarButton && userDropdown && !userAvatarButton.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.add('hidden');
+        }
+        if (mobileMenuButton && mobileMenu && !mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
 </script>
 
 <style>
